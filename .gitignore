@@ -1,0 +1,17 @@
+build/
+
+external copy/*
+
+external/*
+
+!external/get-modules.sh
+!external/get-modules.ps1
+!external/glad
+!external/pugixml
+!external/misc
+# ^ Modified PlistCPP
+
+CMakeFiles
+
+build.bat
+setup.bat
