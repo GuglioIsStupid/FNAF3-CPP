@@ -26,11 +26,11 @@ void TitleState::enter(Core::Game& /* game */) {
     screenStatic.srcFactor = GL_SRC_ALPHA;
     screenStatic.dstFactor = GL_ONE_MINUS_SRC_ALPHA;
     screenStatic.currentAnimation = new Animation();
+    screenStatic.currentAnimation->add(Assets::assetList[33]);
     screenStatic.currentAnimation->add(Assets::assetList[34]);
     screenStatic.currentAnimation->add(Assets::assetList[35]);
     screenStatic.currentAnimation->add(Assets::assetList[36]);
     screenStatic.currentAnimation->add(Assets::assetList[37]);
-    screenStatic.currentAnimation->add(Assets::assetList[38]);
     screenStatic.animationSpeed = 99.f*10.f;
     animatedObjectStack.push_back(&screenStatic);
     staticAlpha = ((random.randFloat(0, 3) * 25.0f) / 200.0f);
@@ -38,8 +38,9 @@ void TitleState::enter(Core::Game& /* game */) {
     auto makeLineAnim = [&](int startOffset) {
         Animation* anim = new Animation();
 
+        anim->add(Assets::assetList[1024]);
         anim->add(Assets::assetList[1025]);
-        anim->add(Assets::assetList[1026]);
+        anim->add(Assets::assetList[1028]);
         anim->add(Assets::assetList[1029]);
         anim->add(Assets::assetList[1030]);
         anim->add(Assets::assetList[1031]);
@@ -55,7 +56,6 @@ void TitleState::enter(Core::Game& /* game */) {
         anim->add(Assets::assetList[1041]);
         anim->add(Assets::assetList[1042]);
         anim->add(Assets::assetList[1043]);
-        anim->add(Assets::assetList[1044]);
 
         anim->currentFrame = startOffset % anim->frames.size();
         anim->currentSubframe = anim->currentFrame; 
@@ -63,37 +63,17 @@ void TitleState::enter(Core::Game& /* game */) {
 
         return anim;
     };
-
-    lineLeft1 = Object(Assets::assetList[1025], 0, 79, &gx, &gy);
-    Animation* lineLeftAnim = new Animation(); // 1025-1044
-    lineLeftAnim->add(Assets::assetList[1025]);
-    lineLeftAnim->add(Assets::assetList[1026]);
-    lineLeftAnim->add(Assets::assetList[1029]);
-    lineLeftAnim->add(Assets::assetList[1030]);
-    lineLeftAnim->add(Assets::assetList[1031]);
-    lineLeftAnim->add(Assets::assetList[1032]);
-    lineLeftAnim->add(Assets::assetList[1033]);
-    lineLeftAnim->add(Assets::assetList[1034]);
-    lineLeftAnim->add(Assets::assetList[1035]);
-    lineLeftAnim->add(Assets::assetList[1036]);
-    lineLeftAnim->add(Assets::assetList[1037]);
-    lineLeftAnim->add(Assets::assetList[1038]);
-    lineLeftAnim->add(Assets::assetList[1039]);
-    lineLeftAnim->add(Assets::assetList[1040]);
-    lineLeftAnim->add(Assets::assetList[1041]);
-    lineLeftAnim->add(Assets::assetList[1042]);
-    lineLeftAnim->add(Assets::assetList[1043]);
-    lineLeftAnim->add(Assets::assetList[1044]);
-
+    
     float lineLeftAnimSpeed = 24.f*5.25f;
-    lineLeft2 = Object(Assets::assetList[1025], 0, 127, &gx, &gy);
-    lineLeft3 = Object(Assets::assetList[1025], 0, 173, &gx, &gy);
-    lineLeft4 = Object(Assets::assetList[1025], 0, 217, &gx, &gy);
-    lineLeft5 = Object(Assets::assetList[1025], 0, 261, &gx, &gy);
-    lineLeft6 = Object(Assets::assetList[1025], 0, 450, &gx, &gy);
-    lineLeft7 = Object(Assets::assetList[1025], 0, 523, &gx, &gy);
-    lineLeft8 = Object(Assets::assetList[1025], 0, 592, &gx, &gy);
-    lineLeft9 = Object(Assets::assetList[1025], 0, 661, &gx, &gy);
+    lineLeft1 = Object(Assets::assetList[1025], 0, 79, &gx, &gy);
+    lineLeft2 = Object(Assets::assetList[1024], 0, 127, &gx, &gy);
+    lineLeft3 = Object(Assets::assetList[1024], 0, 173, &gx, &gy);
+    lineLeft4 = Object(Assets::assetList[1024], 0, 217, &gx, &gy);
+    lineLeft5 = Object(Assets::assetList[1024], 0, 261, &gx, &gy);
+    lineLeft6 = Object(Assets::assetList[1024], 0, 450, &gx, &gy);
+    lineLeft7 = Object(Assets::assetList[1024], 0, 523, &gx, &gy);
+    lineLeft8 = Object(Assets::assetList[1024], 0, 592, &gx, &gy);
+    lineLeft9 = Object(Assets::assetList[1024], 0, 661, &gx, &gy);
     lineLeft1.currentAnimation = makeLineAnim(0);
     lineLeft1.animationSpeed = lineLeftAnimSpeed;
     lineLeft2.currentAnimation = makeLineAnim(2);
@@ -113,22 +93,22 @@ void TitleState::enter(Core::Game& /* game */) {
     lineLeft9.currentAnimation = makeLineAnim(16);
     lineLeft9.animationSpeed = lineLeftAnimSpeed;
 
-    title = Object(Assets::assetList[156], 118, 172, &gx, &gy);
+    title = Object(Assets::assetList[155], 118, 172, &gx, &gy);
     title.currentAsset->setAnchorCenter();
-    newGame = Object(Assets::assetList[593], 97, 452, &gx, &gy);
-    loadGame = Object(Assets::assetList[302], 97, 524, &gx, &gy);
-    version = Object(Assets::assetList[161], 916, 706, &gx, &gy);
-    copyright = Object(Assets::assetList[850], 924, 741, &gx, &gy);
+    newGame = Object(Assets::assetList[592], 97, 452, &gx, &gy);
+    loadGame = Object(Assets::assetList[301], 97, 524, &gx, &gy);
+    version = Object(Assets::assetList[160], 916, 706, &gx, &gy);
+    copyright = Object(Assets::assetList[849], 924, 741, &gx, &gy);
     copyright.currentAsset->setAnchorCenter();
-    holdDel = Object(Assets::assetList[1022], 376, 734, &gx, &gy);
-    selector = Object(Assets::assetList[834], 54, 525, &gx, &gy);
+    holdDel = Object(Assets::assetList[1021], 376, 734, &gx, &gy);
+    selector = Object(Assets::assetList[833], 54, 525, &gx, &gy);
 
-    theTrap = Object(Assets::assetList[856], 0, 0, &gx, &gy);
+    theTrap = Object(Assets::assetList[855], 0, 0, &gx, &gy);
     theTrap.blendMode = Core::Rendering::BlendMode::Custom;
     theTrap.srcFactor = GL_SRC_ALPHA;
     theTrap.dstFactor = GL_ONE_MINUS_SRC_ALPHA;
 
-    freddyFuckingNewspaper = Object(Assets::assetList[1], 0, 0, &gx, &gy);
+    freddyFuckingNewspaper = Object(Assets::assetList[0], 0, 0, &gx, &gy);
     freddyFuckingNewspaper.alpha = 0.0f;
 
     ::Assets::playSound("titlemusic", -1);
@@ -229,19 +209,19 @@ void TitleState::update(Core::Game& g, float dt) {
                 theTrapA = 5;
             switch (theTrapA) {
                 case 0:
-                    theTrap.currentAsset = Assets::assetList[856];
+                    theTrap.currentAsset = Assets::assetList[855];
                     break;
                 case 1:
-                    theTrap.currentAsset = Assets::assetList[860];
+                    theTrap.currentAsset = Assets::assetList[859];
                     break;
                 case 2:
-                    theTrap.currentAsset = Assets::assetList[862];
+                    theTrap.currentAsset = Assets::assetList[861];
                     break;
                 case 3:
-                    theTrap.currentAsset = Assets::assetList[865];
+                    theTrap.currentAsset = Assets::assetList[864];
                     break;
                 default:
-                    theTrap.currentAsset = Assets::assetList[863];
+                    theTrap.currentAsset = Assets::assetList[862];
                     break;
             }
         }
