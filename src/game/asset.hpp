@@ -1,7 +1,6 @@
 #pragma once
 
 #include <core/rendering/image.hpp>
-#include <core/objects/basic.hpp>
 #include <vector>
 #include <string>
 #include <memory>
@@ -24,6 +23,7 @@ public:
     float currentSubframe;
     bool isPlaying;
     Animation();
+    Animation(const Animation& other);
     void add(Asset *asset);
 };
 

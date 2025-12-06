@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include <vector>
 
+#include <cstddef>
+
 namespace Core {
 namespace Rendering {
 namespace GL2D {
@@ -11,7 +13,11 @@ struct Vertex {
     float x, y;
     float u, v;
     float r, g, b, a;
-};
+#if defined(_MSC_VER)
+} __declspec(align(16));
+#else
+} __attribute__((aligned(16)));
+#endif
 
 bool init();
 void shutdown();

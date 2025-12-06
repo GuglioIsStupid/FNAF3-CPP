@@ -1,13 +1,13 @@
 #include "TitleState.hpp"
 
-#include <core/objects/sprite.hpp>
-#include <core/objects/text.hpp>
 #include <common/common.hpp>
 #include <core/timer.hpp>
 #include <core/input.hpp>
 #include <core/game.hpp>
 #include <core/rendering/shapes.hpp>
 #include <core/rendering/colour.hpp>
+
+#include <game/states/nightState.hpp>
 
 #define AABB(x1, y1, w1, h1, x2, y2, w2, h2) \
     (x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2)
@@ -16,7 +16,7 @@ namespace game {
 namespace states {
 
 void TitleState::enter(Core::Game& /* game */) {
-    random.init();
+    Core::Helpers::initRandom();
     screenStatic = Object(
         Assets::assetList[34],
         0, 0,
@@ -33,7 +33,7 @@ void TitleState::enter(Core::Game& /* game */) {
     screenStatic.currentAnimation->add(Assets::assetList[37]);
     screenStatic.animationSpeed = 99.f*10.f;
     animatedObjectStack.push_back(&screenStatic);
-    staticAlpha = ((random.randFloat(0, 3) * 25.0f) / 200.0f);
+    staticAlpha = ((Core::Helpers::randFloat(0, 3) * 25.0f) / 200.0f);
 
     auto makeLineAnim = [&](int startOffset) {
         Animation* anim = new Animation();
@@ -187,7 +187,7 @@ void TitleState::update(Core::Game& g, float dt) {
 
         if (staticTimer >= 0.04f) {
             staticTimer = 0.0f;
-            staticAlpha = (random.randInt(15, 50) / 255.0f);
+            staticAlpha = (Core::Helpers::randInt(15, 50) / 255.0f);
         }
 
         if (selectorTimer >= 0.3f) {
@@ -197,14 +197,14 @@ void TitleState::update(Core::Game& g, float dt) {
 
         if (theTrapTimer1 >= 1.0f) {
             theTrapTimer1 = 0.0f;
-            theTrapB = random.randInt(0, 4);
+            theTrapB = Core::Helpers::randInt(0, 4);
         }
 
         float dt60 = dt * 60.0f;
         theTrapRando60fpsTimer += dt60;
         if (theTrapRando60fpsTimer >= frameTimerFor60FPS) {
             if (theTrapB == 1)
-                theTrapA = random.randInt(0, 4);
+                theTrapA = Core::Helpers::randInt(0, 4);
             else
                 theTrapA = 5;
             switch (theTrapA) {
@@ -227,7 +227,7 @@ void TitleState::update(Core::Game& g, float dt) {
         }
         if (theTrapTimer2 >= 0.3f) {
             theTrapTimer2 = 0.0f;
-            theTrapAlpha = random.randFloat(0.9f, 1.0f);
+            theTrapAlpha = Core::Helpers::randFloat(0.9f, 1.0f);
         }
 
         screenStatic.currentAnimation->isPlaying = true;
@@ -273,7 +273,9 @@ void TitleState::update(Core::Game& g, float dt) {
         newspaperTimer += dt;
         if (newspaperTimer >= 3.0f) {
             newspaperTimer = 0.0f;
-            state = 3; // TODO: Make this change the state
+            state = 3;
+            g.changeState<game::states::NightState>();
+            std::cout << "Switched to NightState from TitleState\n";
         }
     }
 }

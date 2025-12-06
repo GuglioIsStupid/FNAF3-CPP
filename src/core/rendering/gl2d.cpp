@@ -43,13 +43,16 @@ static GLuint link(GLuint vs, GLuint fs) {
 
 bool init() {
     if (s_program) return true;
+
     const char* vsSrc = R"GLSL(
         #version 330 core
         layout(location=0) in vec2 aPos;
         layout(location=1) in vec2 aUV;
         layout(location=2) in vec4 aColor;
+
         out vec2 vUV;
         out vec4 vColor;
+
         void main() {
             vUV = aUV;
             vColor = aColor;
@@ -61,14 +64,15 @@ bool init() {
         #version 330 core
         in vec2 vUV;
         in vec4 vColor;
+
         uniform bool uUseTex;
         uniform sampler2D uTex;
+
         out vec4 oColor;
+
         void main() {
             vec4 col = vColor;
-            if (uUseTex) {
-                col *= texture(uTex, vUV);
-            }
+            if (uUseTex) col *= texture(uTex, vUV);
             oColor = col;
         }
     )GLSL";
@@ -79,16 +83,18 @@ bool init() {
         in vec4 vColor;
 
         uniform sampler2D uTex;
+        uniform float uSDFWidth;
 
         out vec4 oColor;
 
         void main() {
             float sdf = texture(uTex, vUV).r;
 
-            float width = fwidth(sdf);
-            float alpha = smoothstep(0.5 - width,
-                                    0.5 + width,
-                                    sdf);
+            float alpha = smoothstep(0.5 - uSDFWidth,
+                                     0.5 + uSDFWidth,
+                                     sdf);
+
+            if(alpha < 0.01) discard; // early discard
 
             oColor = vec4(vColor.rgb, vColor.a * alpha);
         }
@@ -98,16 +104,27 @@ bool init() {
     if (!vs) return false;
     GLuint fs = compile(GL_FRAGMENT_SHADER, fsSrc);
     if (!fs) { glDeleteShader(vs); return false; }
+
     s_program = link(vs, fs);
     glDeleteShader(vs);
     glDeleteShader(fs);
+
     GLuint fs_sdf = compile(GL_FRAGMENT_SHADER, fsSDF);
     s_programSDF = link(vs, fs_sdf);
     glDeleteShader(fs_sdf);
+
     if (!s_program) return false;
 
     s_locUseTex = glGetUniformLocation(s_program, "uUseTex");
     s_locTex = glGetUniformLocation(s_program, "uTex");
+
+    GLint sdfTex = glGetUniformLocation(s_programSDF, "uTex");
+    GLint sdfWidth = glGetUniformLocation(s_programSDF, "uSDFWidth");
+
+    glUseProgram(s_programSDF);
+    if (sdfTex >= 0) glUniform1i(sdfTex, 0);
+    if (sdfWidth >= 0) glUniform1f(sdfWidth, 0.015f);
+    glUseProgram(0);
 
     glGenVertexArrays(1, &s_vao);
     glBindVertexArray(s_vao);
@@ -125,12 +142,9 @@ bool init() {
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glUseProgram(s_programSDF);
-    glUniform1i(glGetUniformLocation(s_programSDF,"uTex"),0);
-    glUseProgram(0);
-
     return true;
 }
+
 
 void shutdown() {
     if (s_vbo) { glDeleteBuffers(1, &s_vbo); s_vbo = 0; }
@@ -140,27 +154,41 @@ void shutdown() {
 
 void draw(GLenum mode, const Vertex* verts, size_t count, GLuint texture, bool sdf) {
     if (!s_program || !s_vao || !s_vbo || !verts || count == 0) return;
-    glUseProgram(sdf && s_programSDF ? s_programSDF : s_program);
+
+    GLuint prog = sdf && s_programSDF ? s_programSDF : s_program;
+    glUseProgram(prog);
     glBindVertexArray(s_vao);
 
+    static GLsizeiptr s_vboSize = 0;
     GLsizeiptr bytes = (GLsizeiptr)(count * sizeof(Vertex));
+
     glBindBuffer(GL_ARRAY_BUFFER, s_vbo);
-    GLint curSize = 0; glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &curSize);
-    if (bytes > curSize) {
+    if (bytes > s_vboSize) {
         glBufferData(GL_ARRAY_BUFFER, bytes, verts, GL_DYNAMIC_DRAW);
+        s_vboSize = bytes;
     } else {
-        glBufferSubData(GL_ARRAY_BUFFER, 0, bytes, verts);
+        void* ptr = glMapBufferRange(GL_ARRAY_BUFFER, 0, bytes,
+                                     GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+        if (ptr) {
+            std::memcpy(ptr, verts, bytes);
+            glUnmapBuffer(GL_ARRAY_BUFFER);
+        }
     }
 
-    if (texture) {
+    static bool lastUseTex = false;
+    bool useTex = texture != 0;
+    GLint locUse = glGetUniformLocation(prog, "uUseTex");
+    GLint locTex = glGetUniformLocation(prog, "uTex");
+
+    if (locUse >= 0 && lastUseTex != useTex) {
+        glUniform1i(locUse, useTex);
+        lastUseTex = useTex;
+    }
+
+    if (useTex && locTex >= 0) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
-        if (s_locTex >= 0) glUniform1i(s_locTex, 0);
-        if (s_locUseTex >= 0) glUniform1i(s_locUseTex, 1);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    } else {
-        if (s_locUseTex >= 0) glUniform1i(s_locUseTex, 0);
+        glUniform1i(locTex, 0);
     }
 
     glDrawArrays(mode, 0, (GLsizei)count);
@@ -168,6 +196,7 @@ void draw(GLenum mode, const Vertex* verts, size_t count, GLuint texture, bool s
     glBindVertexArray(0);
     glUseProgram(0);
 }
+
 
 void drawTriangles(const Vertex* verts, size_t count, GLuint texture, bool sdf) {
     draw(GL_TRIANGLES, verts, count, texture, sdf);

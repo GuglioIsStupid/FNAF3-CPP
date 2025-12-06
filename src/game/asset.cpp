@@ -7,10 +7,13 @@
 #define George() entry.path().stem().string().c_str()
 #define GeorgeButFuckedUp() entry.path().filename().string().c_str()
 #define AwesomeSauce() (assetDir + filename).c_str()
-#define DoItJiggle if (
-#define Girl entry.is_regular_file()
-#define hmm ) {
-#define AnswerMePrincess }
+#define Girl ) {
+#define Do if
+#define It (
+#define Jiggle entry.is_regular_file()
+#define Answer }
+#define Me
+#define Princess
 
 Asset::Asset(std::string path) {
     load(path);
@@ -23,6 +26,13 @@ Asset::~Asset() {
 
 Animation::Animation()
     : currentFrame(0), currentSubframe(0.0f) {
+}
+
+Animation::Animation(const Animation& other)
+    : frames(other.frames),
+      currentFrame(other.currentFrame),
+      currentSubframe(other.currentSubframe),
+      isPlaying(other.isPlaying) {
 }
 
 void Animation::add(Asset* asset) {
@@ -57,7 +67,7 @@ void loadAllAssets() {
             int index = std::stoi(entry.path().stem().string());
             assetList[index] = new Asset(entry.path().string());
 
-            std::cout << "Loaded asset " << index << ": " << entry.path().string() << "\n";
+            //std::cout << "Loaded asset " << index << ": " << entry.path().string() << "\n";
         }
     }
 
@@ -65,7 +75,7 @@ void loadAllAssets() {
     if (!mixer) return;
 
     for (const auto& entry : std::filesystem::directory_iterator(assetDir)) {
-        DoItJiggle Girl hmm
+        Do It Jiggle Girl
             std::string filename = GeorgeButFuckedUp();
 
             MIX_Audio* audio = MIX_LoadAudio(mixer, AwesomeSauce(), true);
@@ -73,9 +83,8 @@ void loadAllAssets() {
                 std::cerr << "Failed to load audio: " << filename << " Error: " << SDL_GetError() << "\n";
             } else {
                 soundMap[George()] = audio;
-                std::cout << "Loaded audio: " << George() << "\n";
             }
-        AnswerMePrincess
+        Answer Me Princess
     }
 }
 
@@ -102,13 +111,31 @@ void unloadAllAssets() {
 }
 
 void playSound(const std::string& name, int loops = 0) {
-    auto it = soundMap.find(name);
-    if (it == soundMap.end()) {
+    auto itOld = audioTracks.find(name);
+    if (itOld != audioTracks.end()) {
+        if (itOld->second) {
+            MIX_StopTrack(itOld->second, 0);
+            MIX_DestroyTrack(itOld->second);
+        }
+        audioTracks.erase(itOld);
+    }
+
+    auto loopOld = loopingTracks.find(name);
+    if (loopOld != loopingTracks.end()) {
+        if (loopOld->second) {
+            MIX_StopTrack(loopOld->second, 0);
+            MIX_DestroyTrack(loopOld->second);
+        }
+        loopingTracks.erase(loopOld);
+    }
+
+    auto itSound = soundMap.find(name);
+    if (itSound == soundMap.end()) {
         std::cerr << "Sound not found: " << name << "\n";
         return;
     }
 
-    MIX_Audio* audio = it->second;
+    MIX_Audio* audio = itSound->second;
     if (!audio) {
         std::cerr << "Audio is null for sound: " << name << "\n";
         return;
@@ -138,6 +165,11 @@ void playSound(const std::string& name, int loops = 0) {
 }
 
 void stopAudio(const std::string& name) {
+    auto loopIt = loopingTracks.find(name);
+    if (loopIt != loopingTracks.end()) {
+        loopingTracks.erase(loopIt);
+    }
+
     auto it = audioTracks.find(name);
     if (it == audioTracks.end()) {
         std::cerr << "No track playing for sound: " << name << "\n";

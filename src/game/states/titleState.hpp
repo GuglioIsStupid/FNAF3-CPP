@@ -60,7 +60,6 @@ private:
     int theTrapA, theTrapB = 0;
     int checks = 0;
 
-    Core::Helpers::Random random;
     std::vector<Object*> animatedObjectStack;
 
     int state = 0;

@@ -156,7 +156,7 @@ void Game::render() {
 
     glViewport(0, 0, winW, winH);
     {
-        std::vector<Core::Rendering::GL2D::Vertex> verts = {
+        static const Core::Rendering::GL2D::Vertex screenQuad[6] = {
             {-1.f,  1.f, 0.f,0.f, 0.1f,0.1f,0.1f,1.f},
             {-1.f, -1.f, 0.f,0.f, 0.1f,0.1f,0.1f,1.f},
             { 1.f, -1.f, 0.f,0.f, 0.1f,0.1f,0.1f,1.f},
@@ -165,7 +165,7 @@ void Game::render() {
             { 1.f,  1.f, 0.f,0.f, 0.1f,0.1f,0.1f,1.f},
             {-1.f,  1.f, 0.f,0.f, 0.1f,0.1f,0.1f,1.f},
         };
-        Core::Rendering::GL2D::drawTriangles(verts);
+        Core::Rendering::GL2D::drawTriangles(screenQuad, 6);
     }
 
     Core::Rendering::TextRenderer::getInstance().setViewport(
@@ -174,7 +174,7 @@ void Game::render() {
 
     glViewport(vp.x, vp.y, vp.w, vp.h);
     {
-        std::vector<Core::Rendering::GL2D::Vertex> verts = {
+        static const Core::Rendering::GL2D::Vertex screenQuad[6] = {
             {-1.f,  1.f, 0.f,0.f, 0.f,0.f,0.f,1.f},
             {-1.f, -1.f, 0.f,0.f, 0.f,0.f,0.f,1.f},
             { 1.f, -1.f, 0.f,0.f, 0.f,0.f,0.f,1.f},
@@ -183,14 +183,16 @@ void Game::render() {
             { 1.f,  1.f, 0.f,0.f, 0.f,0.f,0.f,1.f},
             {-1.f,  1.f, 0.f,0.f, 0.f,0.f,0.f,1.f},
         };
-        Core::Rendering::GL2D::drawTriangles(verts);
+        Core::Rendering::GL2D::drawTriangles(screenQuad, 6);
     }
 
     if (m_state) {
         m_state->render(*this);
     }
 
-    Core::Rendering::print("FPS: " + std::to_string(Core::Timer::getFPS()), 10, 20);
+    char buf[32];
+    std::snprintf(buf, sizeof(buf), "FPS: %d", (int)Core::Timer::getFPS());
+    Core::Rendering::print(buf, 10, 20);
 
     glViewport(0, 0, winW, winH);
 

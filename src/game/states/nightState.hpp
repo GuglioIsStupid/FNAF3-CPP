@@ -6,9 +6,9 @@
 namespace game {
 namespace states {
 
-class TestState : public Core::State {
+class NightState : public Core::State {
 public:
-    std::string state_name = "test";
+    std::string state_name = "night";
     void enter(Core::Game& game) override;
     void handleEvents(Core::Game& game, SDL_Event& event) override;
     void update(Core::Game& game, float dt) override;
@@ -16,7 +16,12 @@ public:
     void leave(Core::Game& game) override;
 
 private:
-    Object testObject;
+    Object blipTop;
+    Object blipBottom;
+    Object nightText;
+
+    float timer = 0.0f;
+    float fade = 0.0f;
 
     int gx, gy = 0;
 };

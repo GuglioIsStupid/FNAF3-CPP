@@ -1,7 +1,5 @@
 #include "testState.hpp"
 
-#include <core/objects/sprite.hpp>
-#include <core/objects/text.hpp>
 #include <common/common.hpp>
 #include <core/timer.hpp>
 
