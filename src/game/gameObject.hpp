@@ -19,6 +19,7 @@ public:
     bool mouseReleased;
     bool floating;
     bool forceShow;
+    bool reverseExpansion;
     Asset *currentAsset;
     Animation *currentAnimation;
     Animation *currentSecondaryAnimation;

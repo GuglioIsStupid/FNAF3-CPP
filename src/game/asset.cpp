@@ -18,6 +18,8 @@
 Asset::Asset(std::string path) {
     load(path);
     this->path = path;
+    this->width = getWidth();
+    this->height = getHeight();
 }
 
 Asset::~Asset() {
@@ -66,7 +68,6 @@ void loadAllAssets() {
         if (entry.is_regular_file()) {
             int index = std::stoi(entry.path().stem().string());
             assetList[index] = new Asset(entry.path().string());
-
             //std::cout << "Loaded asset " << index << ": " << entry.path().string() << "\n";
         }
     }

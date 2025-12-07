@@ -2,6 +2,6 @@
 
 namespace Data {
 
-int night = 1;
+extern int night;
 
 }

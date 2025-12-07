@@ -18,8 +18,8 @@ Object::Object() {
     height = 0;
     alpha = 1.0f;
     reverse = 0;
-    animationSpeed = 1.0f;
-    animationSpeedSecondary = 1.0f;
+    animationSpeed = 99.0f;
+    animationSpeedSecondary = 99.0f;
     clickable = false;
     isInvisible = false;
     mouseReleased = true;
@@ -40,8 +40,8 @@ Object::Object(Asset *asset, int y, int x, int *gx, int *gy) {
     height = asset->getHeight();
     alpha = 1.0f;
     reverse = 0;
-    animationSpeed = 1.0f;
-    animationSpeedSecondary = 1.0f;
+    animationSpeed = 99.0f;
+    animationSpeedSecondary = 99.0f;
     clickable = false;
     isInvisible = false;
     mouseReleased = true;
@@ -62,8 +62,8 @@ Object::Object(int y, int x, int *gx, int *gy, int width, int height) {
     this->height = height;
     alpha = 1.0f;
     reverse = 0;
-    animationSpeed = 1.0f;
-    animationSpeedSecondary = 1.0f;
+    animationSpeed = 99.0f;
+    animationSpeedSecondary = 99.0f;
     clickable = false;
     isInvisible = false;
     mouseReleased = true;

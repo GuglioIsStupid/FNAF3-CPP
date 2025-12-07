@@ -39,6 +39,11 @@ int main(int argc, char** argv) {
     input.addAction("mouse_down");
     input.bindMouseButton("mouse_down", SDL_BUTTON_LEFT);
 
+    input.addAction("night_plus");
+    input.bindKey("night_plus", SDL_SCANCODE_EQUALS);
+    input.addAction("night_minus");
+    input.bindKey("night_minus", SDL_SCANCODE_MINUS);
+
     Core::Rendering::loadFont("default", "assets/fonts/DejaVuLGCSansMono.ttf", 16);
 
     while (game.isRunning()) {

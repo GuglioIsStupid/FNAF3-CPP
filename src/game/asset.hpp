@@ -14,6 +14,8 @@ public:
     ~Asset();
 
     std::string path;
+    int width;
+    int height;
 };
 
 class Animation {

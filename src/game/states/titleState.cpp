@@ -6,8 +6,11 @@
 #include <core/game.hpp>
 #include <core/rendering/shapes.hpp>
 #include <core/rendering/colour.hpp>
+#include <core/rendering/text.hpp>
 
 #include <game/states/nightState.hpp>
+
+#include <game/data.hpp>
 
 #define AABB(x1, y1, w1, h1, x2, y2, w2, h2) \
     (x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2)
@@ -261,6 +264,14 @@ void TitleState::update(Core::Game& g, float dt) {
                 state = 1;
             }
         }
+
+        if (Core::Input::get().justPressed("night_plus")) {
+            if (::Data::night < 6)
+                ::Data::night++;
+        } else if (Core::Input::get().justPressed("night_minus")) {
+            if (::Data::night > 1)
+                ::Data::night--;
+        }
     } else if (state == 1) {
         freddyFuckingNewspaper.alpha += 0.5f * dt;
         newspaperTimer += dt;
@@ -310,6 +321,10 @@ void TitleState::render(Core::Game& game) {
     }
 
     freddyFuckingNewspaper.render();
+
+    char buf[32];
+    std::snprintf(buf, sizeof(buf), "Target Night: %d", ::Data::night);
+    Core::Rendering::print(buf, 10, 50);
 }
 
 void TitleState::leave(Core::Game& /* game */) {

@@ -10,6 +10,8 @@
 
 #include <core/game.hpp>
 
+#include <game/states/gameState.hpp>
+
 namespace game {
 namespace states {
 
@@ -80,7 +82,7 @@ void NightState::handleEvents(Core::Game& /* game */, SDL_Event& /* event */) {
 
 }
 
-void NightState::update(Core::Game& /* game */, float dt) {
+void NightState::update(Core::Game& g, float dt) {
     if (blipTop.currentAnimation->isPlaying) {
         blipTop.currentAnimation->currentSubframe += 50.f * dt;
         blipTop.currentAnimation->currentFrame = static_cast<int>(blipTop.currentAnimation->currentSubframe);
@@ -107,6 +109,11 @@ void NightState::update(Core::Game& /* game */, float dt) {
         timer += dt;
     } else {
         fade += dt;
+        if (fade >= 1.0f) {
+            fade = 1.0f;
+            g.changeState<game::states::GameState>();
+            std::cout << "Switched to GameState from NightState\n";
+        }
     }
 }
 
